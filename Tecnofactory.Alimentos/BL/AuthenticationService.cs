@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Tecnofactory.Alimentos.BL.Interface;
 using Tecnofactory.Alimentos.DAL.Entity;
 using Tecnofactory.Alimentos.DTO;
 
@@ -36,7 +37,6 @@ namespace Tecnofactory.Alimentos.BL
             };
 
             IdentityResult result = await _userManager.CreateAsync(user, request.Password);
-
             if (!result.Succeeded)
             {
                 throw new ArgumentException($"Unable to register user {request.UserName} errors: {GetErrorsText(result.Errors)}");

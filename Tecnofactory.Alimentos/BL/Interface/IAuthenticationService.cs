@@ -1,6 +1,6 @@
 ﻿using Tecnofactory.Alimentos.DTO;
 
-namespace Tecnofactory.Alimentos.BL
+namespace Tecnofactory.Alimentos.BL.Interface
 {
     public interface IAuthenticationService
     {

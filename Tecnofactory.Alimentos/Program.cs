@@ -1,21 +1,27 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Tecnofactory.Alimentos;
 using Tecnofactory.Alimentos.BL;
+using Tecnofactory.Alimentos.BL.Interface;
 using Tecnofactory.Alimentos.DAL;
 using Tecnofactory.Alimentos.DAL.Entity;
+using Tecnofactory.Alimentos.DAL.Repository;
+using Tecnofactory.Alimentos.DAL.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
+builder.Services.AddEndpointsApiExplorer();
+
+#region Authentication
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddAuthentication(options =>
@@ -36,13 +42,27 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
         };
     });
+#endregion Authentication
 
 #region Dependencies
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<ICatalogueRepository, CatalogueRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IFoodManagementService, FoodManagementService>();
+builder.Services.AddScoped<IOrderCreationService, OrderCreationService>();
 #endregion Dependencies
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+#region Automapper
+MapperConfiguration mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddMvc();
+#endregion
+
+#region Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tecnofactory API", Version = "v1" });
@@ -72,6 +92,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+#endregion Swagger
 
 var app = builder.Build();
 
