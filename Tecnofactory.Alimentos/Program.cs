@@ -18,8 +18,8 @@ var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration["ConnectionStrings:db"]));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("ApplicationDb"));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration["ConnectionStrings:db"]));
 
 builder.Services.AddEndpointsApiExplorer();
 
